@@ -21,3 +21,6 @@ dist/
 
 # MacOS
 .DS_Store
+
+# chroma local db
+chroma_langchain_db/
