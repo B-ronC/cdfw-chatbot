@@ -4,6 +4,9 @@ from langchain_core.documents import Document
 from get_embedding_function import get_embedding_function
 from langchain_chroma import Chroma
 
+CHROMA_PATH = "./chroma_langchain_db"
+DATA_PATH = "./data"
+
 def main():
     documents = load_documents()
     chunks = split_documents(documents)
@@ -11,7 +14,7 @@ def main():
 
 # load documents from the "data" directory
 def load_documents():
-    document_loader = PyPDFDirectoryLoader("data")
+    document_loader = PyPDFDirectoryLoader(DATA_PATH)
     return document_loader.load()
 
 # split documents into chunks
@@ -55,7 +58,7 @@ def add_to_chroma(chunks: list[Document]):
     # load existing database
     vector_store = Chroma(
         embedding_function=get_embedding_function(),
-        persist_directory="./chroma_langchain_db",
+        persist_directory=CHROMA_PATH,
     )
 
     # get chunks with IDs
