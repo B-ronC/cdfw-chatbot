@@ -1,3 +1,6 @@
+import argparse
+import os
+import shutil
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
@@ -8,6 +11,14 @@ CHROMA_PATH = "./chroma_langchain_db"
 DATA_PATH = "./data"
 
 def main():
+    # database reset
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--reset", action="store_true", help="Reset the database.")
+    args = parser.parse_args()
+    if args.reset:
+        print("✨ Clearing Database")
+        clear_database()
+
     documents = load_documents()
     chunks = split_documents(documents)
     add_to_chroma(chunks)
@@ -20,8 +31,8 @@ def load_documents():
 # split documents into chunks
 def split_documents(documents: list[Document]):
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000, 
-        chunk_overlap=150
+        chunk_size=800, 
+        chunk_overlap=200
     )
     return text_splitter.split_documents(documents)
 
@@ -81,6 +92,10 @@ def add_to_chroma(chunks: list[Document]):
         vector_store.add_documents(documents=new_chunks, ids=new_chunk_ids)
     else:
         print("✅ No new documents to add")
+
+def clear_database():
+    if os.path.exists(CHROMA_PATH):
+        shutil.rmtree(CHROMA_PATH)
     
 if __name__ == "__main__":
     main()
