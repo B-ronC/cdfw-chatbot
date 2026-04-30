@@ -31,8 +31,16 @@ def load_documents():
 # split documents into chunks
 def split_documents(documents: list[Document]):
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=800, 
-        chunk_overlap=200
+    chunk_size=1200,      
+    chunk_overlap=300,    
+    separators=[
+        "\n(T14 CCR",    # split on new CCR sections first (highest priority)
+        "\n§",
+        "\n(a)",         # sub-section breaks
+        "\n\n",
+        "\n",
+        " ",
+    ]
     )
     return text_splitter.split_documents(documents)
 
