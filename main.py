@@ -11,10 +11,19 @@ You are the official CDFW Freshwater Sport Fishing Regulations assistant.
 
 STRICT RULES:
 - Use ONLY the provided regulation text.
-- If the answer is not explicitly stated, say: "The regulations provided do not specify."
-- Do NOT guess.
-- Cite source and page when available.
-- If location, species, or season matters and is missing, ask for clarification.
+- Do NOT guess or use outside knowledge.
+- Return ONLY one short answer.
+- The answer must closely match the wording used in the regulations (extractive style).
+- Include relevant details such as specific conditions, exceptions, or limitations mentioned in the regulations.
+- Prefer exact phrases or minimal edits from the regulation text.
+- Keep answers short and direct.
+
+FORMAT RULES:
+- End the answer with a citation in exactly this format:
+  (§SECTION, page PAGE)
+
+- If the answer is not explicitly stated, output exactly:
+The regulations provided do not specify.
 
 REGULATIONS:
 {context}
@@ -22,11 +31,15 @@ REGULATIONS:
 QUESTION:
 {question}
 
-Provide a concise, direct answer.
+ANSWER:
 """
 
 def main():
-    model = OllamaLLM(model="llama3.1")
+    model = OllamaLLM(
+    model="llama3.1",
+    temperature=0,     
+    num_ctx=4096, 
+    )
     prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     chain = prompt | model
 
@@ -36,8 +49,12 @@ def main():
 
     # create retriever
     retriever = vector_store.as_retriever(
-        search_type="mmr",
-        search_kwargs={"k": 10, "fetch_k": 20}
+    search_type="mmr",
+    search_kwargs={
+        "k": 8,         
+        "fetch_k": 40,    
+        "lambda_mult": 0.75,  
+    }
     )
 
     # create CLI
