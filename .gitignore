@@ -24,3 +24,9 @@ dist/
 
 # chroma local db
 chroma_langchain_db/
+
+# test questions
+test_questions/
+
+# chatbot evaluator
+evaluate_chatbot.py
